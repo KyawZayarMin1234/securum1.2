@@ -6,13 +6,10 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export async function DELETE(
-  _req: Request,
-  { params }: { params: { [key: string]: string | string[] } }
-) {
-  const sessionId = Array.isArray(params.sessionId)
-    ? params.sessionId[0]
-    : (params.sessionId as string);
+export async function DELETE(req: Request) {
+  const { pathname } = new URL(req.url);
+  const m = pathname.match(/\/api\/chat\/session\/([^/]+)$/);
+  const sessionId = m?.[1];
   if (!sessionId) {
     return NextResponse.json({ error: "Missing sessionId" }, { status: 400 });
   }
