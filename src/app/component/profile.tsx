@@ -368,7 +368,7 @@ export default function ProfileMenu({
                         <button
                           onClick={() => setActiveTab(it.key as any)}
                           disabled={Boolean((it as any).disabled)}
-                          className={`w-full flex items-center gap-2 rounded-md px-3 py-2 text-sm ${activeTab === it.key ? 'bg-accent' : 'hover:bg-accent/60'} ${it.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          className={`w-full flex items-center gap-2 rounded-md px-3 py-2 text-sm ${activeTab === it.key ? 'bg-accent' : 'hover:bg-accent/60'} ${((it as any).disabled ? 'opacity-50 cursor-not-allowed' : '')}`}
                         >
                           <it.icon className="h-4 w-4" />
                           <span>{it.label}</span>
