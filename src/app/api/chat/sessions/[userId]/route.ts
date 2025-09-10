@@ -1,13 +1,17 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabase() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) {
+    throw new Error("Supabase env not configured (SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)");
+  }
+  return createClient(url, key);
+}
 
 export async function GET(req: Request) {
+  const supabase = getSupabase();
   const { pathname } = new URL(req.url);
   const m = pathname.match(/\/api\/chat\/sessions\/([^/]+)$/);
   const userId = m?.[1];

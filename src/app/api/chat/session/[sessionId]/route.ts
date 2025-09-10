@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabase() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) {
+    throw new Error("Supabase env not configured (SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)");
+  }
+  return createClient(url, key);
+}
 
 export async function DELETE(req: Request) {
   const { pathname } = new URL(req.url);
@@ -15,6 +19,7 @@ export async function DELETE(req: Request) {
   }
 
   try {
+    const supabase = getSupabase();
     const idValue: any = Number.isFinite(Number(sessionId)) ? Number(sessionId) : sessionId;
     // Best-effort: remove dependent rows first if they exist
     // Try common tables: chat_messages, messages. Ignore if table doesn't exist.

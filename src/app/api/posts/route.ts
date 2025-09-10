@@ -1,14 +1,18 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabase() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) {
+    throw new Error("Supabase env not configured (SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)");
+  }
+  return createClient(url, key);
+}
 
 export async function GET() {
     try {
+      const supabase = getSupabase();
       const { data, error } = await supabase
         .from("posts_with_comments")
         .select("*");
@@ -59,6 +63,7 @@ export async function GET() {
   
 export async function POST(req: Request) {
     try {
+      const supabase = getSupabase();
       const body = await req.json();
       const { content, uploader } = body;
   
