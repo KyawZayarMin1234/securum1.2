@@ -11,15 +11,18 @@ export async function GET() {
       return NextResponse.json(quizzes)
     } catch (error) {
       console.error("Full error:", error)
-      console.error("Prisma error code:", error.code)
-      console.error("Meta:", error.meta)
+      const code = (error as any)?.code
+      const meta = (error as any)?.meta
+      const message = (error as any)?.message
+      console.error("Prisma error code:", code)
+      console.error("Meta:", meta)
       
       return NextResponse.json(
         { 
           error: "Database operation failed",
-          details: error.message,
-          code: error.code,
-          meta: error.meta
+          details: message,
+          code,
+          meta
         },
         { status: 500 }
       )
