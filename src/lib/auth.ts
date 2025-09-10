@@ -125,7 +125,7 @@ export const authOptions: NextAuthOptions = {
         let region: string | undefined;
         let country: string | undefined;
         try {
-          const h = nextHeaders();
+          const h = await nextHeaders();
           ua = h.get("user-agent") || undefined;
           const xff = h.get("x-forwarded-for") || "";
           ip = (xff.split(",")[0] || "").trim() ||
@@ -170,4 +170,3 @@ export const authOptions: NextAuthOptions = {
 
   secret: process.env.NEXTAUTH_SECRET,
 };
-
