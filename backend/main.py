@@ -29,9 +29,10 @@ from pathlib import Path
 # =========================
 # CONFIG
 # =========================
-OLLAMA_API_URL = "http://localhost:11434/api/chat"
-MODEL_NAME = "llama3.2:3b"
-GOOGLE_CLIENT_ID = "226312071852-bpt8lnl56pkh0uf544bu3ufk604fms9r.apps.googleusercontent.com"
+# LLM + OAuth configuration: prefer env, fall back to sensible defaults
+OLLAMA_API_URL = os.getenv("OLLAMA_API_URL", "http://localhost:11434/api/chat")
+MODEL_NAME = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 
 from urllib.parse import urlparse, parse_qsl, urlencode, urlunparse
 
@@ -196,6 +197,7 @@ def call_llm(prompt: str, history: list[dict] | None = None, style: str | None =
     payload = {"model": MODEL_NAME, "messages": messages, "stream": False}
 
     try:
+        # Connect/read timeout for non-streaming generation
         response = requests.post(OLLAMA_API_URL, json=payload, timeout=120)
         response.raise_for_status()
         data = response.json()
@@ -242,7 +244,9 @@ def stream_llm_response(prompt: str, history: list[dict] | None = None, style: s
     payload = {"model": MODEL_NAME, "messages": messages, "stream": True}
 
     try:
-        response = requests.post(OLLAMA_API_URL, json=payload, stream=True)
+        # For streaming, use a generous timeout; adjust via env OLLAMA_TIMEOUT if needed
+        stream_timeout = int(os.getenv("OLLAMA_TIMEOUT", "300"))
+        response = requests.post(OLLAMA_API_URL, json=payload, stream=True, timeout=stream_timeout)
         response.raise_for_status()
 
         english_answer = ""
@@ -362,6 +366,8 @@ def list_chat_messages(session_id: int, conn=Depends(get_db_connection)):
 @app.post("/auth/google")
 def google_auth(google_token: GoogleToken, conn=Depends(get_db_connection)):
     try:
+        if not GOOGLE_CLIENT_ID:
+            raise HTTPException(status_code=500, detail="Google auth not configured")
         id_info = id_token.verify_oauth2_token(
             google_token.token, google_requests.Request(), GOOGLE_CLIENT_ID
         )
