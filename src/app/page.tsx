@@ -196,7 +196,7 @@ export default function Home() {
       setLastUserMessage(prompt);
     }
 
-    const newUserMessage = {
+    const newUserMessage: ChatMessage = {
       type: "user",
       text: prompt || (selectedFile ? `[Uploaded file: ${selectedFile.name}]` : ""),
       file: selectedFile ? selectedFile.name : null,
