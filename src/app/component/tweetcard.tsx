@@ -17,6 +17,7 @@ interface Comment {
 }
 
 interface Post {
+  id?: string | number;
   ups?: number;
   comments?: Comment[];
   retweets?: number;
