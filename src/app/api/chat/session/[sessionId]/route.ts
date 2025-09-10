@@ -8,9 +8,11 @@ const supabase = createClient(
 
 export async function DELETE(
   _req: Request,
-  { params }: { params: { sessionId: string } }
+  { params }: { params: { [key: string]: string | string[] } }
 ) {
-  const sessionId = params.sessionId;
+  const sessionId = Array.isArray(params.sessionId)
+    ? params.sessionId[0]
+    : (params.sessionId as string);
   if (!sessionId) {
     return NextResponse.json({ error: "Missing sessionId" }, { status: 400 });
   }
