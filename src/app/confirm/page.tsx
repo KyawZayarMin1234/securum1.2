@@ -1,9 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
 
-export default function ConfirmPage() {
+function ConfirmContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
@@ -26,12 +26,10 @@ export default function ConfirmPage() {
     setLoading(true);
     try {
       await axios.post("/api/auth/verify-code", { email, code });
-      // Try to auto sign-in if password is known (not available on this page),
-      // so just redirect to login with a success message fallback.
       setSuccess("Email confirmed! You can sign in now.");
       setTimeout(() => router.push("/login"), 1200);
     } catch (err: any) {
-      setError(err.response?.data?.detail || "Verification failed");
+      setError(err?.response?.data?.detail || "Verification failed");
     } finally { setLoading(false); }
   };
 
@@ -46,5 +44,13 @@ export default function ConfirmPage() {
         <button disabled={loading} className="btn">{loading ? "Confirming..." : "Confirm"}</button>
       </form>
     </div>
+  );
+}
+
+export default function ConfirmPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-white">Loading...</div>}>
+      <ConfirmContent />
+    </Suspense>
   );
 }
