@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import ProfileMenu from "../component/profile";
 export default function Login() {
   const router = useRouter();
+  const [language, setLanguage] = useState<"en" | "my">("en");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -94,9 +95,15 @@ export default function Login() {
         <ChevronLeft className="mr-1 w-4 h-4" />
         Back
       </button>
-      <ProfileMenu session={null} userScores={null} isDark={false} signOut={function (): void {
-        throw new Error("Function not implemented.");
-      } }/>
+      <ProfileMenu
+        session={null}
+        userScores={null}
+        isDark={false}
+        signOut={() => { /* no-op on login page */ }}
+        language={language}
+        setLanguage={setLanguage}
+        clearChat={() => { /* no-op on login page */ }}
+      />
       <div className="flex flex-col items-center justify-center mt-20">
         <div className="w-full max-w-sm p-8 bg-transparent">
           <h1 className="text-3xl font-bold text-center">Yoo, welcome back!</h1>
