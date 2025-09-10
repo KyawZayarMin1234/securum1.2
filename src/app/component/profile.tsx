@@ -363,18 +363,21 @@ export default function ProfileMenu({
                       { key: 'feedback', label: 'Feedback', icon: Star },
                       { key: 'security', label: 'Security', icon: Shield, disabled: true },
                       { key: 'account', label: 'Account', icon: UserIcon },
-                    ] as const).map((it) => (
-                      <li key={it.key}>
-                        <button
-                          onClick={() => setActiveTab(it.key as any)}
-                          disabled={Boolean((it as any).disabled)}
-                          className={`w-full flex items-center gap-2 rounded-md px-3 py-2 text-sm ${activeTab === it.key ? 'bg-accent' : 'hover:bg-accent/60'} ${((it as any).disabled ? 'opacity-50 cursor-not-allowed' : '')}`}
-                        >
-                          <it.icon className="h-4 w-4" />
-                          <span>{it.label}</span>
-                        </button>
-                      </li>
-                    ))}
+                    ] as const).map((it) => {
+                      const isDisabled = Boolean((it as any).disabled)
+                      return (
+                        <li key={it.key}>
+                          <button
+                            onClick={() => setActiveTab(it.key as any)}
+                            disabled={isDisabled}
+                            className={`w-full flex items-center gap-2 rounded-md px-3 py-2 text-sm ${activeTab === it.key ? 'bg-accent' : 'hover:bg-accent/60'} ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          >
+                            <it.icon className="h-4 w-4" />
+                            <span>{it.label}</span>
+                          </button>
+                        </li>
+                      )
+                    })}
                   </ul>
                 </nav>
 
