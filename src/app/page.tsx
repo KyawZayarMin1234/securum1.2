@@ -623,7 +623,7 @@ export default function Home() {
               ) : (
                 <Mic className="size-[22px] cursor-pointer text-muted-foreground" onClick={handleRecording} />
               )}
-              <SendHorizontal className="size-[22px] cursor-pointer text-muted-foreground" onClick={handleSend} />
+              <SendHorizontal className="size-[22px] cursor-pointer text-muted-foreground" onClick={() => handleSend()} />
             </div>
           </div>
         </div>
