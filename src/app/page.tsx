@@ -88,6 +88,7 @@ export default function Home() {
   const resolvedTheme = theme === "system" ? systemTheme : theme;
   const isDark = resolvedTheme === "dark";
   const t = translations[language];
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "";
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -223,7 +224,7 @@ export default function Home() {
         } catch {}
         formData.append("file", selectedFile);
 
-        const res = await axios.post("http://localhost:8000/chat/message", formData, {
+        const res = await axios.post(`${API_BASE}/chat/message`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
@@ -259,7 +260,7 @@ export default function Home() {
       try {
         const isGuest = !session?.user?.id;
         const userId = session?.user?.id || `guest_${crypto.randomUUID()}`;
-        const response = await fetch("http://localhost:8000/chat/stream", {
+        const response = await fetch(`${API_BASE}/chat/stream`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -332,7 +333,7 @@ export default function Home() {
 
   const handleSelectSession = async (sessionId: number) => {
     try {
-      const res = await axios.get(`http://localhost:8000/chat/messages/${sessionId}`);
+      const res = await axios.get(`${API_BASE}/chat/messages/${sessionId}`);
       const msgs: ChatMessage[] = (res.data || []).map((m: any) => ({
         type: m.role === "user" ? "user" : "bot",
         text: m.content,

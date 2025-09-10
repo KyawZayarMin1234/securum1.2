@@ -60,6 +60,7 @@ export default function ProfileMenu({
   const score = Math.max(0, Math.floor(userScores ?? 0));        
   const stars = Math.min(5, Math.floor(score / 25));            
   const percent = Math.min(100, Math.max(0, (score / 125) * 100)); 
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "";
 
   function rankForScore(s: number): { key: string; name: string; img: string } {
     if (s <= 0) return { key: "unranked", name: "Unranked", img: "/assets/orb2.png" };
@@ -152,7 +153,7 @@ export default function ProfileMenu({
     }
     try {
       setFbSubmitting(true);
-      const res = await fetch('http://localhost:8000/feedback', {
+      const res = await fetch(`${API_BASE}/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
