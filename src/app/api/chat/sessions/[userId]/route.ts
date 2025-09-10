@@ -7,8 +7,10 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export async function GET(req: Request, { params }: { params: { userId: string } }) {
-  const userId = params.userId;
+export async function GET(req: Request) {
+  const { pathname } = new URL(req.url);
+  const m = pathname.match(/\/api\/chat\/sessions\/([^/]+)$/);
+  const userId = m?.[1];
 
   if (!userId || typeof userId !== "string") {
     return NextResponse.json({ error: "Invalid or missing User ID" }, { status: 400 });
